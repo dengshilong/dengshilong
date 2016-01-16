@@ -1,14 +1,10 @@
-<html>
-<head>
-    <title>
-        首页
-    </title>
-</head>
-<body>
-    <h1>文章列表</h1>
-    {% for post in posts %}
-        <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
-        <div>{{ post.content}} </div>
-    {% endfor %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}邓世龙的自留地 {% endblock %}
+{% block content %}
+{% for post in posts %}
+    {% include "blog/_post.html" %}
+{% endfor %}
+{% endblock %}
+{% block sidebar %}
+    {% include "blog/sidebar.html" %}
+{% endblock %}

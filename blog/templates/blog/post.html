@@ -1,12 +1,8 @@
-<html>
-<head>
-    <title>
-        内容页
-    </title>
-</head>
-<body>
-    <h1>文章内容</h1>
-        <h3>{{ post.title }}</h3>
-        <div>{{ post.content }} </div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %} {{ post.title }} {% endblock %}
+{% block content %}
+    {% include "blog/_post.html" %}
+{% endblock %}
+{% block sidebar %}
+    {% include "blog/sidebar.html" %}
+{% endblock %}
