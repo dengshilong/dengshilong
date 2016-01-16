@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+{% if category %}
+    {{category}}|邓世龙的自留地 
+{% elif tag %}
+    {{tag}}|邓世龙的自留地
+{% endif %}
+{% endblock %}
+{% block archive_title %}
+{% if category %}
+    <h1 class="archive-title">分类目录归档: {{category}}</h1>
+{% elif tag %}
+    <h1 class="archive-title">标签归档: {{tag}}</h1>
+{% endif %}
+{% endblock %}
+{% block content %}
+{% for post in posts %}
+    {% include "blog/_post.html" %}
+{% endfor %}
+{% endblock %}
+{% block sidebar %}
+    {% include "blog/sidebar.html" %}
+{% endblock %}

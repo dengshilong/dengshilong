@@ -8,20 +8,24 @@ class Tag(models.Model):
     creat_time = models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return u'%s' % self.name
+    def get_absolute_url(self):
+        return reverse('blog.tag', args=[self.name])
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
     creat_time = models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return u'%s' % self.name
+    def get_absolute_url(self):
+        return reverse('blog.category', args=[self.name])
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
     slug = models.CharField(max_length=300)
     content = models.TextField()
     publish_time = models.DateTimeField(auto_now_add=True)
-    category = models.ForeignKey(Category)
-    tags = models.ManyToManyField(Tag, blank=True)
+    category = models.ManyToManyField(Category)
+    tag = models.ManyToManyField(Tag, blank=True)
     def __unicode__(self):
         return u'%s' % self.title
     
@@ -32,3 +36,7 @@ class Post(models.Model):
             month = '0' + month
         day = str(self.publish_time.day)
         return reverse('blog.post', args=[year,month,day,self.slug])
+    def get_categories(self):
+        return self.category.all()
+    def get_tags(self):
+        return self.tag.all()
