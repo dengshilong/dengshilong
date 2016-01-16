@@ -1,0 +1,14 @@
+<html>
+<head>
+    <title>
+        首页
+    </title>
+</head>
+<body>
+    <h1>文章列表</h1>
+    {% for post in posts %}
+        <h3><a href="">{{ post.title }}</a></h3>
+        <div>{{ post.content}} </div>
+    {% endfor %}
+</body>
+</html>
