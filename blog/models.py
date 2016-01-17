@@ -18,6 +18,8 @@ class Category(models.Model):
         return u'%s' % self.name
     def get_absolute_url(self):
         return reverse('blog.category', args=[self.name])
+    def get_post_count(self):
+        return Post.objects.filter(category=self.id).count()
 
 class Post(models.Model):
     title = models.CharField(max_length=255)

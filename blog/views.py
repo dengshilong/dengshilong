@@ -13,19 +13,24 @@ def index(request):
         posts = paginator.page(1)
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
-    context = {'posts' : posts}
+    categories = Category.objects.all()
+    context = {'posts' : posts, 'categories': categories}
     return render(request, 'blog/index.html', context)
 def post(request, year, month, day, slug):
     post = get_object_or_404(Post, publish_time__year=int(year), publish_time__month=int(month), publish_time__day=int(day), slug=slug)
-    return render(request, 'blog/post.html', {'post':post})
+    categories = Category.objects.all()
+    return render(request, 'blog/post.html', {'post':post, 'categories': categories})
 def category(request, name):
     cat = get_object_or_404(Category, name=name)
     posts = Post.objects.filter(category=cat.id)
-    return render(request, 'blog/archive.html', {'posts':posts, 'category':name})
+    categories = Category.objects.all()
+    return render(request, 'blog/archive.html', {'posts':posts, 'category':name, 'categories': categories})
 def tag(request, name):
     tag = get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tag=tag.id)
-    return render(request, 'blog/archive.html', {'posts':posts, 'tag':name})
+    categories = Category.objects.all()
+    return render(request, 'blog/archive.html', {'posts':posts, 'tag':name, 'categories':categories})
 def archive(request, year, month):
     posts = Post.objects.filter(publish_time__year=int(year), publish_time__month=int(month))
-    return render(request, 'blog/archive.html', {'posts':posts, 'year': year, 'month':month})
+    categories = Category.objects.all()
+    return render(request, 'blog/archive.html', {'posts':posts, 'year': year, 'month':month, 'categories':categories})
