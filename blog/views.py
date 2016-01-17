@@ -26,3 +26,6 @@ def tag(request, name):
     tag = get_object_or_404(Tag, name=name)
     posts = Post.objects.filter(tag=tag.id)
     return render(request, 'blog/archive.html', {'posts':posts, 'tag':name})
+def archive(request, year, month):
+    posts = Post.objects.filter(publish_time__year=int(year), publish_time__month=int(month))
+    return render(request, 'blog/archive.html', {'posts':posts, 'year': year, 'month':month})
