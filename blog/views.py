@@ -15,18 +15,18 @@ def post(request, year, month, day, slug):
     return render(request, 'blog/post.html', {'post':post, 'categories': categories})
 def category(request, name):
     cat = get_object_or_404(Category, name=name)
-    posts = Post.objects.filter(category=cat.id)
+    posts = Post.objects.filter(category=cat.id).order_by('-publish_time')
     posts = paginator_process(posts, request)
     categories = Category.objects.all()
     return render(request, 'blog/archive.html', {'posts':posts, 'category':name, 'categories': categories})
 def tag(request, name):
     tag = get_object_or_404(Tag, name=name)
-    posts = Post.objects.filter(tag=tag.id)
+    posts = Post.objects.filter(tag=tag.id).order_by('-publish_time')
     posts = paginator_process(posts, request)
     categories = Category.objects.all()
     return render(request, 'blog/archive.html', {'posts':posts, 'tag':name, 'categories':categories})
 def archive(request, year, month):
-    posts = Post.objects.filter(publish_time__year=int(year), publish_time__month=int(month))
+    posts = Post.objects.filter(publish_time__year=int(year), publish_time__month=int(month)).order_by('-publish_time')
     posts = paginator_process(posts, request)
     categories = Category.objects.all()
     return render(request, 'blog/archive.html', {'posts':posts, 'year': year, 'month':month, 'categories':categories})
