@@ -1,4 +1,5 @@
 from .models import Post
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def get_page(request):
     page = request.GET.get('page', '') 
@@ -18,3 +19,13 @@ def prev_next_post(id):
     except:
         next_post = None
     return prev_post,next_post
+def paginator_process(posts, request):
+    page = get_page(request)
+    paginator = Paginator(posts, 2)  
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    return posts

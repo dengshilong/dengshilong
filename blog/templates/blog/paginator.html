@@ -1,0 +1,15 @@
+<nav>
+    <ul class="pager">
+        {% if posts.has_next %}
+            <li><a class='paginator' title="早期文章" href="?page={{posts.next_page_number}}">早期文章</a></li>
+        {% endif %}
+        {% if posts.has_previous %}
+        <li><a class='paginator' title="较新文章" href="?page={{posts.previous_page_number}}">较新文章</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+
+
+

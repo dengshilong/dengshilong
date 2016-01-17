@@ -21,6 +21,7 @@
 {% for post in posts %}
     {% include "blog/_post.html" %}
 {% endfor %}
+    {% include "blog/paginator.html" %}
 {% endblock %}
 {% block sidebar %}
     {% include "blog/sidebar.html" %}
