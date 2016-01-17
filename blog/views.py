@@ -15,7 +15,7 @@ def index(request):
         posts = paginator.page(paginator.num_pages)
     categories = Category.objects.all()
     context = {'posts' : posts, 'categories': categories}
-    return render(request, 'blog/index.html', context)
+    return render(request, 'blog/archive.html', context)
 def post(request, year, month, day, slug):
     post = get_object_or_404(Post, publish_time__year=int(year), publish_time__month=int(month), publish_time__day=int(day), slug=slug)
     categories = Category.objects.all()
