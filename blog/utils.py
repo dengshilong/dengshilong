@@ -21,7 +21,7 @@ def prev_next_post(id):
     return prev_post,next_post
 def paginator_process(posts, request):
     page = get_page(request)
-    paginator = Paginator(posts, 2)  
+    paginator = Paginator(posts, 10)  
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:

@@ -2,5 +2,6 @@
   <h2 class="blog-post-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
   <p class="blog-post-meta">{{post.publish_time|date:"Y年n月d日"}} category:{% for category in post.get_categories %}<a href="{{category.get_absolute_url}}">{{category}}</a>{% if forloop.last %}{% else %}, {% endif %} {% endfor %} tag:{% for tag in post.get_tags %}<a href="{{tag.get_absolute_url}}">{{tag}}</a>{% if forloop.last %}{% else %}, {% endif %}{% endfor %}</p>
   <hr>
-  <p>{{ post.content }}</p>
+  {% load my_markdown %}
+  <p>{{ post.content|mark|safe}}</p>
 </div>
