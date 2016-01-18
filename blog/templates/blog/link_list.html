@@ -1,0 +1,10 @@
+{% if links %}  
+ <div class="sidebar-module">
+    <h4>链接</h4>
+    <ol class="list-unstyled">
+      {% for link in links %}
+      <li><a href="{{link.url}}">{{link.name}}</a></li>
+      {% endfor %}
+    </ol>
+  </div>
+{% endif %}

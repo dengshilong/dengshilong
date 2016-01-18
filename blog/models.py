@@ -42,3 +42,9 @@ class Post(models.Model):
         return self.category.all()
     def get_tags(self):
         return self.tag.all()
+class Link(models.Model):
+    url = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+    def __unicode__(self):
+        return u'%s' % self.name
