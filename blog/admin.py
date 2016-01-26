@@ -3,6 +3,7 @@ from django.contrib import admin
 from .models import Post,Tag,Category,Link
 from .forms import PostForm
 class PostAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("title",)}
     form = PostForm
 admin.site.register(Post, PostAdmin)
 admin.site.register(Tag)
