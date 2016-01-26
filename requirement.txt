@@ -1,4 +1,5 @@
 Django==1.9.1
+-e git+https://timmyomahony@github.com/timmyomahony/django-pagedown.git@c7d158dfeca312fa4eecbbab1601f472d645ccf4#egg=django_pagedown-master
 Markdown==2.6.5
 pytz==2015.7
 South==1.0.2
