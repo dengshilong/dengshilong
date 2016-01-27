@@ -42,6 +42,15 @@ class Post(models.Model):
         return self.category.all()
     def get_tags(self):
         return self.tag.all()
+class Page(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=300, allow_unicode=True)
+    content = models.TextField()
+    publish_time = models.DateTimeField(auto_now_add=True)
+    def __unicode__(self):
+        return u'%s' % self.title
+    def get_absolute_url(self):
+        return reverse('blog.page', args=[self.slug])
 class Link(models.Model):
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=100)

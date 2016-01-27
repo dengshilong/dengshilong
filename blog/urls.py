@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^(\d+)/(\d+)/$', views.archive, name="blog.archive"),
     url(r'category/(.+)/$', views.category, name="blog.category"),
     url(r'tag/(.+)/$', views.tag, name="blog.tag"),
+    url(r'(.+)/$', views.page, name="blog.page"),
 ]

@@ -1,0 +1,5 @@
+{% if pages %}
+{% for page in pages %}
+   <a class="blog-nav-item" href="{{page.get_absolute_url}}">{{page.title}}</a>
+{% endfor %}
+{% endif %}
