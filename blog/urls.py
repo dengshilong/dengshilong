@@ -1,6 +1,11 @@
 from django.conf.urls import url
+from django.contrib.sitemaps.views import sitemap
 from . import views
 from .feeds import LatestEntriesFeed
+from .sitemaps import BlogSitemap
+sitemaps = {
+    'static': BlogSitemap,
+}
 urlpatterns = [
     url(r'^$', views.index, name='blog.index'),
     url(r'^(\d+)/(\d+)/(\d+)/(.+)/$', views.post, name="blog.post"),
@@ -9,4 +14,6 @@ urlpatterns = [
     url(r'tag/(.+)/$', views.tag, name="blog.tag"),
     url(r'^feed/$', LatestEntriesFeed()),
     url(r'(.+)/$', views.page, name="blog.page"),
+    url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap')
 ]
