@@ -23,7 +23,7 @@ class Category(models.Model):
 
 class Post(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=300, allow_unicode=True)
+    slug = models.SlugField(max_length=300, allow_unicode=True, unique=True)
     content = models.TextField()
     publish_time = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField(Category)
@@ -44,7 +44,7 @@ class Post(models.Model):
         return self.tag.all()
 class Page(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=300, allow_unicode=True)
+    slug = models.SlugField(max_length=300, allow_unicode=True, unique=True)
     content = models.TextField()
     publish_time = models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
