@@ -2,7 +2,7 @@
  <div class="sidebar-module">
     <h4>文章归档</h4>
     <ol class="list-unstyled">
-      {% for month in months %}
+      {% for month in months reversed %}
       <li><a href="/{{month|date:"Y/n/"}}">{{month|date:"Y年m月"}}</a></li>
       {% endfor %}
     </ol>

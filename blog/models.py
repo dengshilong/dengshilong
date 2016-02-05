@@ -37,6 +37,8 @@ class Post(models.Model):
         if len(month) == 1:
             month = '0' + month
         day = str(self.publish_time.day)
+        if len(day) == 1:
+            day = '0' + day
         return reverse('blog.post', args=[year,month,day,self.slug])
     def get_categories(self):
         return self.category.all()
