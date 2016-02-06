@@ -10,7 +10,8 @@ class Tag(models.Model):
         return u'%s' % self.name
     def get_absolute_url(self):
         return reverse('blog.tag', args=[self.name])
-
+    def get_post_count(self):
+        return Post.objects.filter(tag=self.id).count()
 class Category(models.Model):
     name = models.CharField(max_length=30)
     creat_time = models.DateTimeField(auto_now_add=True)
