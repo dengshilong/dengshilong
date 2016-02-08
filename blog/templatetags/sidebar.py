@@ -1,6 +1,6 @@
 from django import template
-from markdown import markdown
 from blog.models import Post,Category,Link,Tag
+from random import shuffle
 register = template.Library()
 @register.inclusion_tag('blog/archive_list.html', takes_context = True)
 def get_archive(context):
@@ -13,4 +13,8 @@ def get_links(context):
     return {'links': Link.objects.all()}
 @register.inclusion_tag('blog/tag_list.html', takes_context = True)
 def get_tags(context):
-    return {'tags': Tag.objects.all()}
+    tags = Tag.objects.all()
+    tags = list(tags) 
+    shuffle(tags)
+    tags = tags[:50]
+    return {'tags': tags}
