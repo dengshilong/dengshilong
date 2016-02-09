@@ -21,6 +21,8 @@ class Category(models.Model):
         return reverse('blog.category', args=[self.name])
     def get_post_count(self):
         return Post.objects.filter(category=self.id).count()
+    def get_post(self):
+        return Post.objects.filter(category=self.id)
 
 class Post(models.Model):
     title = models.CharField(max_length=255)

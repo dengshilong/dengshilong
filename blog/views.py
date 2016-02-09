@@ -28,3 +28,7 @@ def archive(request, year, month):
 def page(request, slug):
     page = get_object_or_404(Page, slug=slug)
     return render(request, 'blog/page.html', {'page':page})
+def sitemap_view(request):
+    categories = Category.objects.all()
+    pages = Page.objects.all()
+    return render(request, 'blog/sitemap.html', {'pages':pages, 'categories':categories}) 

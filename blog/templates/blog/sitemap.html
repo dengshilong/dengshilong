@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %} 本站目录|邓世龙的自留地 {% endblock %}
+{% block content %}
+    <h2>Posts</h2>
+    <ul>
+    {% for category in categories %}
+        <li>{{category}}</li>
+        <ul>
+        {% for post in category.get_post reversed%}
+           <li> <a href="{{post.get_absolute_url}}">{{post}}</a></li>
+        {% endfor %}
+        </ul>
+        <br/>
+    {% endfor %} 
+    </ul>
+    <h2>Pages</h2>
+    <ul>
+    {% for page in pages %}
+       <li> <a href="{{page.get_absoute_url}}">{{page}}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

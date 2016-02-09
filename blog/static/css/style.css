@@ -132,6 +132,17 @@ h6, .h6 {
   text-align: center;
   border-radius: 30px;
 }
+.nav-next {
+    position: absolute;
+}
+
+.nav-previous {
+    left: 0;
+}
+
+.nav-next {
+    right: 0;
+}
 
 
 /*
