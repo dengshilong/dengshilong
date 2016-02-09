@@ -59,6 +59,6 @@ class Page(models.Model):
 class Link(models.Model):
     url = models.CharField(max_length=255)
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=100, blank=True)
     def __unicode__(self):
         return u'%s' % self.name
