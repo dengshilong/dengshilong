@@ -1,8 +1,12 @@
 from fabric.api import *
 env.hosts = ['43.242.128.158']
 env.user = 'dengsl'
-def post():
+def add_post():
     local("git add db.sqlite3 && git commit -m 'add post'")
+    local("git push origin master")
+    deploy()
+def modify_post():
+    local("git add db.sqlite3 && git commit -m 'modify post'")
     local("git push origin master")
     deploy()
 def deploy():
