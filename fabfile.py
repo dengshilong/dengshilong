@@ -9,6 +9,10 @@ def modify_post():
     local("git add db.sqlite3 && git commit -m 'modify post'")
     local("git push origin master")
     deploy()
+def fix_bug():
+    local("git commit -m 'fix bug'")
+    local("git push origin master")
+    deploy()
 def deploy():
     code_dir = '/home/dengsl/program/python/webBlog/dengshilong'
     """with settings(warn_only=True):
@@ -16,4 +20,5 @@ def deploy():
             run("git clone user@vcshost:/path/to/repo/.git %s" % code_dir)"""
     with cd(code_dir):
         run("git pull")
+        run("source ../bin/activate")
         run("python manage.py collectstatic")
