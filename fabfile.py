@@ -16,3 +16,4 @@ def deploy():
             run("git clone user@vcshost:/path/to/repo/.git %s" % code_dir)"""
     with cd(code_dir):
         run("git pull")
+        run("python managy collectstatic")

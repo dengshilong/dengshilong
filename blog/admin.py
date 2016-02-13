@@ -5,6 +5,7 @@ from .forms import PostForm
 class PostAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     form = PostForm
+    list_display = ('title', 'publish_time')
 admin.site.register(Post, PostAdmin)
 admin.site.register(Tag)
 admin.site.register(Category)

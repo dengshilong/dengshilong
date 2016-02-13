@@ -176,3 +176,14 @@ h6, .h6 {
 .blog-footer p:last-child {
   margin-bottom: 0;
 }
+#totop {
+  position: fixed;
+  bottom: 5em;
+  right: 1em;
+  cursor: pointer;
+}
+@media only screen and (max-width: 1024px) {
+  #totop {
+    display: none !important;
+  }
+}
