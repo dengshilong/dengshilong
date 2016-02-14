@@ -1,0 +1,286 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+		<title>贪吃蛇</title>
+		<style>
+			body{
+				text-align:center;
+				
+			}
+			table { 
+				align:center; 
+			} 
+			#main{
+				margin:0 auto;
+			}
+			#board tr td{
+				width:20px;
+				height:20px;
+				border:1px solid black;
+			}
+			#board{
+				 border-collapse:collapse;
+			}
+		</style>
+		<script type="text/javascript">
+			var START_SPEED = 500;//游戏初始速度
+			var ROW = 21;//游戏界面行数
+			var COL = 21;//游戏界面列数
+			var DOWN = 0,LEFT = 1,UP = 2,RIGHT = 3;
+			var COLOR = "#B0C4DE";//蛇身颜色
+			var tbl;//游戏界面
+			var body = [];//蛇的身体，刚开始蛇身为空
+			var direction = DOWN;//蛇的方向，0下，1左，2上，3右,初始向下
+			var timer;//定时器
+			var food = new Array(1);
+			var status = 0;//游戏状态，0为开始，1为游戏中，2为游戏结束
+			
+			var score = 0;//得分，初始为0
+			var level = 0;//游戏级别,初始为0
+			var speed = START_SPEED;//游戏速度，刚开始为游戏初始速度
+			function generateFood(){//生成食物
+				var a = Math.floor(Math.random() * ROW);
+				var b = Math.floor(Math.random() * ROW);
+				if(isCellFilled(a,b)){//如果已经被填充了，继续生成食物
+					return generateFood();
+				}else{
+					return {x:a,y:b};
+				}
+			}
+			function paintFood(){//画出食物
+				tbl.rows[food.x].cells[food.y].style.backgroundColor = "green";
+			}
+			function paintBody(){//画出蛇身
+				for(var i = 0;i < body.length;i++){
+					tbl.rows[body[i].x].cells[body[i].y].style.backgroundColor = COLOR;
+				}
+			}
+			function ereaseBody(){//擦除蛇身
+				for(var i = 0;i < body.length;i++){
+					tbl.rows[body[i].x].cells[body[i].y].style.backgroundColor = "white";
+				}
+			}
+			function ereaseFood(){//擦除食物
+				tbl.rows[food.x].cells[food.y].style.backgroundColor = "white";	
+			}
+			function moveRight(){//右移
+				if(direction == LEFT){//如果现在的方向是向左，右移无效
+					return;
+				}
+				
+				direction = RIGHT;//改变方向
+				move();//前进
+				
+			}
+			function moveLeft(){//左移
+				if(direction == RIGHT){//如果现在的方向是向右，左移无效
+					return;
+				}
+				direction = LEFT;//改变方向
+				move();//前进
+			}
+			function moveUp(){//上移
+				if(direction == DOWN){//如果现在的方向是向下，上移无效
+					return;
+				}
+				direction = UP;//改变方向
+				move();//前进
+			}
+			function moveDown(){//下移	
+				if(direction == UP){//如果现在的方向是向上，下移无效
+					return;
+				}
+				direction = DOWN;//改变方向
+				move();//前进
+				
+			}
+			function move(){//根据现在的方向，前进
+				var next = getNextPosition();//得到下一个位置
+				var value = checkPosition(next.x,next.y);//判断下一格位置的情况
+				if(value == -1){//下一个位置是墙壁或者蛇身
+					alert("失败，游戏结束");
+					clearInterval(timer);
+					status = 2;
+					return;
+				}else if(value == 0){//下一个位置是空格
+					clearInterval(timer);
+					ereaseBody();
+					//蛇前进，蛇头后面的都前进一格
+					for(var i = body.length - 2;i >= 0;i--){
+						body[i + 1] = body[i];
+					}
+					body[0] = next;//蛇去下一个位置
+					paintBody();
+					timer = setInterval(move,speed);
+				}else{//下一个位置是食物
+					clearInterval(timer);
+					ereaseBody();
+					body.unshift(food);//将食物加入到蛇头位置
+					paintBody();
+					score = score + 1;//得分加一
+					updateScore();
+					if(Math.floor(score / 5) > level){//判断得分是否应该升级
+						level++;
+						if(level == 10){//一共九级，如果level等于10表示通关了
+							alert("恭喜你，通关了");
+							status = 2;
+							return;
+						}
+						updateLevel();//更改级别
+						speedUp();//加速
+					}
+					food = generateFood();
+					paintFood();
+					timer = setInterval(move,speed);
+					
+				}
+			}
+			function updateScore(){//更新得分
+				document.getElementById("score").innerHTML = score;
+			}
+			function updateLevel(){//更新级别
+				document.getElementById("level").innerHTML = level;
+			}
+			function speedUp(){//加速
+				speed = speed - 50;
+			}
+			function getNextPosition(){//根据蛇的前进的方向，得到下一个位置
+				var x = body[0].x;
+				var y = body[0].y;
+				if(direction == DOWN){
+					x++;
+				}else if(direction == LEFT){
+					y--;
+				}else if(direction == UP){
+					x--;
+				}else{
+					y++;
+				}
+				return {x:x,y:y};
+			}
+			function checkPosition(x,y){//判断下一个位置的情况
+				if(x < 0 || x == ROW || y < 0 || y == COL){
+					return -1;//墙壁
+				}
+				if(isCellFilled(x,y)){
+					for(var i = 0;i < body.length;i++){
+						if(body[i].x == x && body[i].y == y)
+							return -1;//蛇身
+					}
+					return 1;//食物	
+				}else{
+					return 0;//空格
+				}
+			}
+					
+				
+			
+			function isCellFilled(x,y){//判断这个位置是否被填充了
+				if(tbl.rows[x].cells[y].style.backgroundColor == "white"){
+					return false;
+				}else{
+					return true;
+				}
+			}
+			function keyControl(e){//键盘输入
+				if(status != 1){
+					return;
+				}
+				var code;
+				var e = e || event;
+				code =e.keyCode || e.which || e.charCode;
+				switch(code){
+					case 37:{//left arrow
+						moveLeft();
+						break;
+					}
+					case 38:{//up arrow
+						moveUp();
+						break;
+					}
+					case 39:{//right arrow
+						moveRight();
+						break;
+					}
+					case 40:{//down arrow
+						moveDown();
+						break;
+					}
+				}
+			}
+			function begin(){
+				if(document.getElementById("begin").value == "重新开始"){
+					reset();
+				}
+				document.getElementById("begin").value = "重新开始";
+				status = 1;
+				tbl = document.getElementById("board");
+				for(var i = 0;i < ROW;i++){
+					for(var j = 0;j < COL;j++){
+						tbl.rows[i].cells[j].style.backgroundColor = "white";
+					}
+				}
+				body.push({x:0,y:0});//初始化蛇身，左上角为蛇的开始
+				paintBody();//画出蛇
+				food = generateFood();//生成食物
+				paintFood();//画出食物
+				move();//蛇前进
+			}
+			function reset(){//重置游戏
+				clearInterval(timer);//清除定时器
+				document.getElementById("pause").value = "暂停";
+				status = 0;//状态设为1，即未开始游戏
+				score = 0;//得分置0
+				level = 0;//级别置0
+				direction = DOWN//置初始方向为向下
+				speed = START_SPEED;//游戏速度为初速
+				updateScore();//更新分数
+				updateLevel();//更新级别
+				ereaseBody();//擦除蛇身
+				ereaseFood();//擦除食物
+				body = [];//置蛇身为空
+			}
+			function pause(){//如果游戏运行，则暂停；如果游戏处于暂停，则运行
+				if(document.getElementById("pause").value == "暂停"){//暂停
+					clearInterval(timer);//清除计数器
+					status = 2;
+					document.getElementById("pause").value = "继续";//改变按钮的值
+					
+				}else{//继续
+					timer = setInterval(move,speed);//设置计时器
+					status = 1;//游戏状态为游戏中
+					document.getElementById("pause").value = "暂停";//改变按钮的值
+				}
+			}
+			document.onkeydown = keyControl;
+		</script>
+			
+	</head>
+	<body>
+		<p style= "font-size:15pt;">一个简单的贪吃蛇游戏，用方向键控制</p>
+		<input type="button" id="begin" value="开始" onclick="begin()"/>
+		<input type="button" id="pause" value="暂停" onclick="pause()"/>
+		Score:<span id="score" style="width:3">  0</span>
+		Level:<span id="level" >0</span>
+		
+		<!-- 一个21 * 21的表 -->
+		<div id="main" align="center"> 
+			<script>
+				var ROW = 21;
+				var COL = 21;
+				var tabStr = '<table id="board" align="center">';
+				for (var i = 0; i < ROW; i++){
+					tabStr += "<tr>";
+					for (var j = 0; j < COL; j++){
+						tabStr += "<td>" + "</td>";
+
+					}
+					tabStr += "</tr>";
+				}
+				tabStr += "</table>";
+				document.write(tabStr);
+			</script>
+		</div>
+	</body>
+</html>

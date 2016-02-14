@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <title>数独求解程序</title>
+        <script type="text/javascript">
+            var LEN = 9;
+            var s = new Array();//存储数独的二维数组
+            var sign = false;//标记数独是否填满
+			function to_array(f){//将输入的字符转化为二维数组，并返回二维数组
+                var e = new Array();
+				var count = 0;
+                for(var i = 0;i < LEN;i++){
+                    var a = new Array();
+                    for(var j = 0;j < LEN;j++){	
+                        a[j] = f.charAt(count) - '0';
+						count++;
+                    }
+                    e[i] = a;
+                }
+                return e;
+    		}//to_array
+            function check(n, k){
+                var i = Math.floor(n / LEN);
+                var j;
+                //所在的行
+                for(j = 0; j < LEN; j++)
+                    if(s[i][j] == k)
+                        return false;
+                //所在的列
+                j = n % LEN;
+                for(i = 0; i < LEN; i++)
+                    if(s[i][j] == k)
+                        return false;
+                //所在的3*3方格的左上角坐标
+                var x = Math.floor((Math.floor(n / LEN)) / 3) * 3;
+                var y = Math.floor((n % LEN) / 3) * 3;
+                for(i = x; i < x + 3; i++){
+                    for(j = y; j < y + 3; j++){
+                        if(s[i][j] == k)
+                            return false;
+                    }
+                }
+                return true;
+            }//check
+            function dfs(n){
+                if(n >= LEN * LEN){//已填满，返回
+                    sign = true;
+                    return ;
+                }
+                if(s[Math.floor(n/LEN)][n%LEN] != 0)//格子已填
+                    dfs(n+1);//继续下一格
+                else{
+                    for(var i = 1; i <= LEN; i++){
+                        if(check(n,i)){//可以放入
+                            s[Math.floor(n/LEN)][n%LEN] = i;
+                            dfs(n+1);//继续下一格
+                            if(sign == true)
+                                return;
+                            s[Math.floor(n/LEN)][n%LEN] = 0;//找不到解，回溯
+                        }else{
+                            continue;
+                        }
+                    }
+                }
+            }//dfs
+            function soduku(){
+                sign = false;
+                var f = document.getElementById("input").value;
+                s = to_array(f);
+                dfs(0);
+                if(sign){
+                    var result = "";
+                    for(var i = 0; i < LEN; i++){
+                        for(var j = 0; j < LEN; j++){
+                            result += s[i][j];
+                        }
+                        result += "<br/>";
+                    }
+                    document.getElementById("result").innerHTML = result;
+                }else{
+                    document.getElementById("result").innerHTML = "这个数独无解";
+                }
+                
+            }   
+		</script>
+	</head>
+	<body>
+		<h2>数独求解程序</h2>
+        <p>在下面的框中输入数独，数字分为9行，每行9个数字，需要求解的数字用0代替</p>
+		<textarea id="input" rows="10" cols="10" style= "font-size:18pt;"></textarea>
+        <button type="button" onclick="soduku()">求解</button>
+        <p id="result" style= "font-size:18pt;"></p>
+        
+		
+	</body>
+</html>

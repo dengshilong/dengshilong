@@ -1,0 +1,290 @@
+<html>
+	<head> 
+		<style>
+			body{
+				text-align:center;
+			}
+			table { 
+				align:center; 
+			} 
+			#main{
+				margin:0 auto;
+			}
+			#board tr td{
+				width:50px;
+				height:50px;
+				border:1px solid black;
+				text-align:center;
+				font-size:20pt;
+			}
+			#board{
+				 border-collapse:collapse;
+			}
+			td img{
+				height: 40px;
+				width: 40px;
+				border: solid #fff 3px;
+			}
+		</style>
+		<script type="text/javascript">
+			var tbl;//游戏界面
+			var ROW = 9;
+			var COL = 10;
+			var board = new Array(ROW);
+			var curIMG;
+			var curTD;
+			var preIMG;
+			var preTD;
+			var pa;
+			var pb;
+			var IMG_PATH = './images/';
+			var sum = 0;
+			function init(){
+				var types = 15;
+				var imgs = new Array(types + 1);
+				
+				for(var i = 1; i <= types; i++){
+					imgs[i] = i + '.jpg';
+				}
+				tbl = document.getElementById("board");
+				//构造table
+				for(var row = 0; row < ROW; row++){
+					var tr = tbl.insertRow(-1);
+					for(var col = 0; col < COL ; col++) {
+						var td = tr.insertCell(-1);
+					}
+				}
+				//构造矩阵
+				for(var i=0; i < ROW + 2; i++){
+					board[i] = new Array(COL);
+					for(var j = 0; j < COL + 2; j++){
+						board[i][j] = 0;
+					}
+				}
+				var total = ROW * COL;
+				var tmp = new Array(total);//产生随机位置用
+				for(var i = 0; i < total; i++){
+					tmp[i] = 0;
+				}
+				for(var i = 0; i < total; i++){
+					if(tmp[i] == 0){
+						var t = Math.floor(Math.random() * types) + 1;
+						tmp[i] = t;
+						while(true){
+							var c = Math.floor(Math.random() * (total - i)) + i;
+							if(tmp[c] == 0){
+								tmp[c] = t;
+								break;
+							}
+						}
+					}
+				}
+				var c = 0;
+				for(var i = 1; i <= ROW; i++){
+					for(var j = 1; j <= COL ; j++){
+						board[i][j] = tmp[c++];
+						tbl.rows[i-1].cells[j-1].innerHTML = '<img src="' + IMG_PATH + imgs[board[i][j]] + '" />';
+					}	
+				}//for
+			}//init
+			function hasPath(pa,pb){
+				//交换pa和pb的位置，是pa在pb的上方
+				if(pa.x > pb.x){
+					var t = pa;
+					pa = pb;
+					pb = t;
+				}else if(pa.x == pb.x){
+					var t = pa;
+					pa = pb;
+					pb = t;
+				}
+				//在同一条直线上，判断是否只用一条直线即可相连
+				if((onLineX(pa,pb) || onLineY(pa,pb)) && hasLine(pa,pb)){
+					return true;
+				}
+				//其中有一个点四周被其它图片包围着
+				if(!isEmpty(pa.x-1,pa.y) && !isEmpty(pa.x+1,pa.y) && !isEmpty(pa.x,pa.y-1) && !isEmpty(pa.x,pa.y+1))
+					return false;
+				if(!isEmpty(pb.x-1,pb.y) && !isEmpty(pb.x+1,pb.y) && !isEmpty(pb.x,pb.y-1) && !isEmpty(pb.x,pb.y+1))
+					return false;
+				var pc,pd;
+				//两个点在同一条直线上，判断是否能用三条直线相连
+				if(onLineX(pa,pb)){
+					for(var i = 0;i < ROW + 2;i++){
+						if(i == pa.x){
+							continue;
+						}
+						pc = {x:i,y:pa.y};
+						pd = {x:i,y:pb.y};
+						if(hasLine(pa,pc) && hasLine(pc,pd) && hasLine(pd,pb)){
+							return true;
+						}
+					}
+					return false;
+				}
+				if(onLineY(pa,pb)){
+					for(var i = 0;i < COL + 2;i++){
+						if(i == pa.y){
+							continue;
+						}
+						pc = {x:pa.x,y:i};
+						pd = {x:pb.x,y:i};
+						if(hasLine(pa,pc) && hasLine(pc,pd) && hasLine(pd,pb)){
+							return true;
+						}
+					}
+					return false;
+				}
+				//两个点不在同一条直线上，判断是否用三条直线可以连接
+				//判断X方向的
+				for(var i = 0;i < ROW + 2;i++){
+					pc = {x:i,y:pa.y};
+					pd = {x:i,y:pb.y};
+					if(isEqual(pa,pc)){
+						if(!isEmpty(pd.x,pd.y)){
+							continue;
+						}else{
+							if(hasLine(pc,pd) && hasLine(pd,pb)){
+								return true;
+							}
+						}
+					}else if(isEqual(pb,pd)){
+						if(!isEmpty(pc.x,pc.y)){
+							continue;
+						}else{
+							if(hasLine(pa,pc) && hasLine(pc,pd)){
+								return true;
+							}
+						}
+					}else{
+						if(!isEmpty(pc.x,pc.y) || !isEmpty(pd.x,pd.y)){
+							continue;
+						}else{
+							if(hasLine(pa,pc) && hasLine(pc,pd) && hasLine(pd,pb)){
+								return true;
+							}
+						}
+					}
+				}
+				//判断Y方向
+				for(var i = 0;i < COL + 2;i++){
+					pc = {x:pa.x,y:i};
+					pd = {x:pb.x,y:i};
+					if(isEqual(pa,pc)){
+						if(!isEmpty(pd.x,pd.y)){
+							continue;
+						}else{
+							if(hasLine(pc,pd) && hasLine(pd,pb)){
+								return true;
+							}
+						}
+					}else if(isEqual(pb,pd)){
+						if(!isEmpty(pc.x,pc.y)){
+							continue;
+						}else{
+							if(hasLine(pa,pc) && hasLine(pc,pd)){
+								return true;
+							}
+						}
+					}else{
+						if(!isEmpty(pc.x,pc.y) || !isEmpty(pd.x,pd.y)){
+							continue;
+						}else{
+							if(hasLine(pa,pc) && hasLine(pc,pd) && hasLine(pd,pb)){
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+				
+			}
+			function isEmpty(x,y){//这个点是否是空的
+				return board[x][y] == 0;
+			}
+			function onLineX(pa,pb){//判断两个点在同一X轴上
+				return pa.x == pb.x;
+			}
+			function onLineY(pa,pb){//判断两个点在同一Y轴上
+				return pa.y == pb.y;
+			}
+			function isEqual(pa,pb){//判断是否是同一个点
+				return pa.x == pb.x && pa.y == pb.y;
+			}
+			function hasLine(pa,pb){//pa,pb两个点可以用直线相连，连线上没有其它图片
+				var x,y,min,max;
+				if(isEqual(pa,pb))
+					return true;
+				if(onLineX(pa,pb)){
+					x = pa.x;
+					min = pa.y < pb.y ? pa.y : pb.y;
+					max = pa.y > pb.y ? pa.y : pb.y;
+					for(y = min + 1;y < max;y++){
+						if(!isEmpty(x,y)){
+							return false;
+						}
+					}
+					if(y == max)
+						return true;
+				}else if(onLineY(pa,pb)){
+					y = pa.y;
+					min = pa.x < pb.x ? pa.x : pb.x;
+					max = pa.x > pb.x ? pa.x : pb.x;
+					for(x = min + 1;x < max;x++){
+						if(!isEmpty(x,y)){
+							return false;
+						}
+					}
+					if(x == max)
+						return true;
+				}
+			}//hasLine
+					
+					
+			document.onclick = function(e){//鼠标点击事件
+				curIMG = document.all ? event.srcElement : e.target;
+				if(curIMG.parentNode.tagName != "TD"){
+					return;
+				}
+				//alert(cur.parentNode.tagName);
+				curIMG.style.border = "solid blue 3px";
+				curTD = curIMG.parentNode;
+				if(curTD.innerHTML == ''){
+					preIMG.style.border = "solid #fff 3px";
+					curIMG = preIMG = curTD = preTd = pa = pb = null;
+				}
+				var r = curTD.parentNode.rowIndex+1;//得到这格所在的行
+				var c = curTD.cellIndex+1;//得到这格所在的列
+				//tbl.rows[r].cells[c].innerHTML = "";
+				if(pa == null){
+					pa = {x:r,y:c};
+					preTD = curTD;
+					preIMG = curIMG;
+				}else{
+					pb = {x:r,y:c};
+					if(!isEqual(pa,pb) && preTD.innerHTML == curTD.innerHTML && hasPath(pa,pb)){
+						preTD.innerHTML = curTD.innerHTML = "";
+						board[pa.x][pa.y] = board[pb.x][pb.y] = 0;
+						sum = sum + 2;
+						if(sum == ROW * COL){
+							alert("恭喜你！过关了。")
+						}
+						
+					}
+					preIMG.style.border = "solid #fff 3px";
+					curIMG.style.border = "solid #fff 3px";
+					preTD = curTD = null;
+					pa = pb = null;
+					preIMG = curIMG = null;
+				}	
+			}
+		</script>
+	</head>
+	<body onload="init()";>
+		<h2>一个简单的连连看</h2>
+		<div id = "main" align="center">
+			<!-- 生成9 * 9 的表格 -->
+			<table id="board"> </table>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,194 @@
+<html>
+	<head> 
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<style>
+			body{
+				text-align:center;
+			}
+			table { 
+				align:center; 
+			} 
+			#main{
+				margin:0 auto;
+			}
+			#board tr td{
+				width:40px;
+				height:40px;
+				border:1px solid black;
+				text-align:center;
+				font-size:20pt;
+			}
+			#board{
+				 border-collapse:collapse;
+			}
+		</style>
+		<script type="text/javascript">
+			var td;//用来记录现在点击的格子
+			var pretd;//用来记录上一次点击的格子
+			var LEN = 9;
+			var sign = false;//标记数独是否填满,true时有解
+            var s = new Array(LEN);//存储数独的二维数组
+            for(var i = 0;i < LEN;i++){//初始化二维数组
+				s[i] = new Array(LEN);
+				for(var j = 0;j < LEN;j++){
+					s[i][j] = 0;
+				}
+			}
+			var tbl ;//数独表格界面
+			
+            function check(n, k){
+                var i = Math.floor(n / LEN);
+                var j;
+                //所在的行
+                for(j = 0; j < LEN; j++)
+                    if(s[i][j] == k)
+                        return false;
+                //所在的列
+                j = n % LEN;
+                for(i = 0; i < LEN; i++)
+                    if(s[i][j] == k)
+                        return false;
+                //所在的3*3方格的左上角坐标
+                var x = Math.floor((Math.floor(n / LEN)) / 3) * 3;
+                var y = Math.floor((n % LEN) / 3) * 3;
+                for(i = x; i < x + 3; i++){
+                    for(j = y; j < y + 3; j++){
+                        if(s[i][j] == k)
+                            return false;
+                    }
+                }
+                return true;
+            }//check
+            function dfs(n){
+                if(n >= LEN * LEN){//已填满，返回
+                    sign = true;
+                    return ;
+                }
+                if(s[Math.floor(n/LEN)][n%LEN] != 0)//格子已填
+                    dfs(n+1);//继续下一格
+                else{
+                    for(var i = 1; i <= LEN; i++){
+                        if(check(n,i)){//可以放入
+                            s[Math.floor(n/LEN)][n%LEN] = i;
+                            dfs(n+1);//继续下一格
+                            if(sign == true)
+                                return;
+                            s[Math.floor(n/LEN)][n%LEN] = 0;//找不到解，回溯
+                        }else{
+                            continue;
+                        }
+                    }
+                }
+            }//dfs
+            function soduku(){
+                sign = false;
+                dfs(0);
+                if(sign){//有解
+                    for(var i = 0; i < LEN; i++){
+                        for(var j = 0; j < LEN; j++){
+                            tbl.rows[i].cells[j].innerHTML = s[i][j];//在表格上输出数独
+                        } 
+                    }
+                } else{
+					document.getElementById("result").innerHTML = "这个数独无解";
+					return;
+				}        
+            }      
+			function init(){
+				tbl = document.getElementById("board");
+			}
+			function reset(){//重置初始状态
+				for(var i = 0; i < LEN; i++){
+                    for(var j = 0; j < LEN; j++){
+                        tbl.rows[i].cells[j].innerHTML = "";
+						tbl.rows[i].cells[j].style.backgroundColor = "white";
+						tbl.rows[i].cells[j].style.color = "black";
+						s[i][j] = 0;
+                    } 
+                }
+				sign = false;
+			}
+			document.onclick = function(e){//鼠标点击事件
+				td = document.all?event.srcElement:e.target;
+				if(typeof pretd != "undefined"){//如果上一次点击的非空
+					var r = pretd.parentNode.rowIndex;//得到表格的行
+					var c = pretd.cellIndex;//得到表格的列
+					if(s[r][c] == 0){//如果这格没填入数字
+						tbl.rows[r].cells[c].style.backgroundColor = "white";//将这格边为白色
+					}
+				}
+				if(td.tagName != "TD")
+					return;
+				pretd = td;
+				td.style.backgroundColor = "lightpink";	
+			}
+			function keyControl(e){
+				var code;
+				var e = e || event;
+				code =e.keyCode || e.which || e.charCode;
+				if(code < 49 || code > 57){//如果不是输入1到9的数字，返回
+					return;
+				}else{
+					td.style.color = "red";//将这个置为红色
+					var value = code - 48;
+					var r = td.parentNode.rowIndex;//得到这格所在的行
+					var c = td.cellIndex;//得到这格所在的列
+					for(var i = 0;i < LEN;i++){//判断所在的行
+						if(s[r][i] == value){
+							alert("这一行中已经存在" + value);
+							return;
+						}
+					}
+					for(var i = 0;i < LEN;i++){//判断所在的列
+						if(s[i][c] == value){
+							alert("这一列中已经存在" + value);
+							return;
+						}
+						
+					}
+					 //所在的3*3方格的左上角坐标
+					var x = Math.floor(r / 3) * 3;
+					var y = Math.floor(c / 3) * 3;
+					for(var i = x; i < x + 3; i++){
+						for(var j = y; j < y + 3; j++){
+							if(s[i][j] == value){
+								alert("在所在的九宫格中已经存在" + value);
+								return ;
+							}
+						}
+					}
+					td.innerHTML = value;
+					s[r][c] = value;
+				}
+				if(td.innerHTML == "")
+					td.style.backgroundColor = "white";
+			}
+			document.onkeydown = keyControl;
+		</script>
+	</head>
+	<body onload="init()";>
+		<h2>一个简单的数独求解程序</h2>
+		<p>用法：点击表格，输入数字，然后点击"求解"按钮<p>
+		<div id = "main">
+			<!-- 生成9 * 9 的表格 -->
+			<script>
+				var ROW = 9;
+				var COL = 9;
+				var tabStr = '<table id="board" align="center">';
+				for (var i = 0; i < ROW; i++){
+					tabStr += "<tr>";
+					for (var j = 0; j < COL; j++){
+						tabStr += "<td>" + "</td>";
+
+					}
+					tabStr += "</tr>";
+				}
+				tabStr += "</table>";
+				document.write(tabStr);
+			</script>
+		</div>
+		<button type="button" onclick="soduku()" style= "font-size:18pt;">求解</button>
+		<button type="button" onclick="reset()" style= "font-size:18pt;">重置</button>
+		<p id="result" style= "font-size:18pt;"></p>
+	</body>
+</html>

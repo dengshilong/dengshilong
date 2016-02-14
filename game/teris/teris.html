@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>俄罗斯方块</title>
+        <style>
+			body{
+				text-align:center;
+				
+			}
+			table { 
+				align:center; 
+			} 
+			#main{
+				margin:0 auto;
+			}
+            #board tr td{
+                width:20px;
+                height:20px;
+                border:1px solid black;
+            }
+            #board{
+                border-collapse:collapse;
+            }
+        </style>
+        <script type="text/javascript">
+			var ROW = 20;//表的行数
+			var COL = 10;//表的列数
+			var COLOR = "#B0C4DE";//方块颜色
+			var START_SPEED = 1000;//游戏初始速度
+            var tbl;//游戏界面的table
+            var status = 0;//游戏状态，0未开始，1游戏中,2结束，初始为未开始
+            var timer;//定时器
+			var score = 0;//得分,初始为0
+			var level = 0;//级别，初始为0
+			
+			var speed = START_SPEED;//游戏速度，初始 为游戏初始速度
+			
+			//board是ROW * COL的数组，与游戏界面的table相对应
+			//0时表示未占用，1是表示已占用
+            var board = new Array(ROW);
+            for(var i=0;i<ROW;i++){   
+                board[i] = new Array(COL);    
+            }   
+            for(var i=0;i<ROW;i++){    
+                for(var j=0; j<COL; j++){    
+                 board[i][j] = 0;    
+                }    
+            } 
+            //当前活动的方块, 它可以左右下移动, 变型.当它触底后, 将会更新board;   
+            var activeBlock; 
+            //生产方块形状, 有7种基本形状.   
+            function generateBlock(){    
+                var block = new Array(4);    
+                //generate a random int number between 0-6;    
+                var t = (Math.floor(Math.random()*20)+1)%7;    
+                switch(t){  
+                    case 0:{//田字块
+                        block[0] = {x:0, y:4};    
+                        block[1] = {x:1, y:4};    
+                        block[2] = {x:0, y:5};    
+                        block[3] = {x:1, y:5}; 
+                        break;
+                    }
+                    case 1:{//长条
+                        block[0] = {x:0,y:3};
+                        block[1] = {x:0,y:4};
+                        block[2] = {x:0,y:5};
+                        block[3] = {x:0,y:6};
+                        break;
+                    }
+                    case 2:{
+                        block[0] = {x:0,y:5};
+                        block[1] = {x:1,y:4};
+                        block[2] = {x:1,y:5};
+                        block[3] = {x:2,y:4};
+                        break;
+                    }
+                    case 3:{
+                        block[0] = {x:0,y:4};
+                        block[1] = {x:1,y:4};
+                        block[2] = {x:1,y:5};
+                        block[3] = {x:2,y:5};
+                        break;
+                    }
+                    case 4:{
+                        block[0] = {x:0,y:3};
+                        block[1] = {x:1,y:3};
+                        block[2] = {x:1,y:4};
+                        block[3] = {x:1,y:5};
+                        break;
+                    }
+                    case 5:{
+                        block[0] = {x:0,y:4};
+                        block[1] = {x:1,y:4};
+                        block[2] = {x:2,y:4};
+                        block[3] = {x:2,y:5};
+                        break;
+                    }
+                    case 6:{
+                        block[0] = {x:0,y:4};
+                        block[1] = {x:1,y:3};
+                        block[2] = {x:1,y:4};
+                        block[3] = {x:1,y:5};
+                        break;
+                    }
+                }//switch
+				return block;
+            }//generateBlock
+			function erease(){//清除显示的方块
+				for(var i = 0;i < 4;i++){
+					tbl.rows[activeBlock[i].x].cells[activeBlock[i].y].style.backgroundColor = "white";
+				}
+			}
+            function paint(){//显示方块
+                for(var i = 0;i < 4;i++){
+                    tbl.rows[activeBlock[i].x].cells[activeBlock[i].y].style.backgroundColor = COLOR; 
+                }
+            }
+			function ereaseBoard(){//清除现在的游戏界面
+				for(var i = 0;i < ROW;i++){
+					for(var j = 0;j < COL;j++){
+						tbl.rows[i].cells[j].style.backgroundColor = "white";
+					}
+				}
+			}
+			function paintBoard(){//显示游戏界面
+				for(var i = 0;i < ROW;i++){
+					for(var j = 0;j < COL;j++){
+						if(board[i][j] == 1){
+							tbl.rows[i].cells[j].style.backgroundColor = COLOR;
+						}
+					}
+				}
+			}
+				
+			function moveDown(){//下移
+				if(checkDown()){//没有触底
+					erease();
+					for(var i = 0;i < 4;i++){
+						activeBlock[i].x = activeBlock[i].x + 1;
+					}
+					paint();
+				}else{//触底
+					clearInterval(timer);
+					updateBoard();
+					var lines = deleteLines();//删除的行数
+					if(lines != 0){//判断此次得分
+						var value = 0;
+						if(lines == 1){
+							value = 1;
+						}else if(lines == 2){
+							value = 3;
+						}else if(lines == 3){
+							value = 6;
+						}else{
+							value = 10;
+						}
+						score = score + value;//修改得分
+						if(Math.floor(score / 10) > level){//判断得分是否应该升级
+							level++;
+							if(level == 10){//一共九级，如果level等于10表示通关了
+								alert("恭喜你，通关了");
+								status = 2;
+								return;
+							}
+							updateLevel();//更改级别
+							speedUp();//加速
+						}
+						updateScore();//更新分数
+						ereaseBoard();//删除现在的游戏界面
+						paintBoard();//显示更新后的游戏界面
+					}
+					activeBlock = generateBlock();//生成方块
+					paint();
+					if(!isValidBlock(activeBlock)){//判断生成的方块是否可以放在最初的位置
+						alert("失败！游戏结束！");
+						status = 2;
+						return;
+					}
+					timer = setInterval(moveDown,speed);
+					
+				}		
+			}
+			function isValidBlock(block){//判断生成的方块是否可以放在最初的位置
+				for(var i = 0;i < 4;i++){
+					if(!isCellValid(block[i].x,block[i].y))
+						return false;
+				}
+				return true;
+			}
+			function isCellValid(x,y){//判断这个格子是否可以填充
+				if(x > ROW - 1 || x < 0 || y > COL - 1 || y < 0){
+					return false;
+				}
+				if(board[x][y] == 1){
+					return false;
+				}
+				return true;
+				
+			}
+			function moveLeft(){//左移
+				if(checkLeft()){//可以左移
+					erease();
+					for(var i = 0;i < 4;i++){
+						activeBlock[i].y = activeBlock[i].y - 1;
+					}
+					paint();
+				}	
+			}
+			function moveRight(){//右移
+				if(checkRight()){//可以右移
+					erease();
+					for(var i = 0;i < 4;i++){
+						activeBlock[i].y = activeBlock[i].y + 1;
+					}
+					paint();
+				}
+			}
+			function rotate(){//旋转
+				//clearInterval(timer);
+				var tmpBlock = copyBlock(activeBlock);
+				var cx = Math.round((tmpBlock[0].x + tmpBlock[1].x + tmpBlock[2].x + tmpBlock[3].x) / 4);
+				var cy = Math.round((tmpBlock[0].y + tmpBlock[1].y + tmpBlock[2].y + tmpBlock[3].y) / 4);
+				//转化后的坐标
+				for(var i = 0;i < 4;i++){
+					tmpBlock[i].x = cx + cy - activeBlock[i].y;
+					tmpBlock[i].y = cy - cx + activeBlock[i].x;
+				}
+				//已经被填充了，不能旋转
+				for(var i = 0;i < 4;i++){
+					if(!isCellValid(tmpBlock[i].x,tmpBlock[i].y)){
+						//timer = setInterval(moveDown,speed);
+						return;
+					}
+				}
+				//旋转
+				erease();
+				for(var i = 0;i < 4;i++){
+					activeBlock[i].x = tmpBlock[i].x;
+					activeBlock[i].y = tmpBlock[i].y;
+				}
+				paint();
+				//timer = setInterval(moveDown,speed);
+			}
+			
+			
+			function copyBlock(old){//复制方块
+				var a = new Array(4);
+				for(var i = 0;i < 4;i++){
+					a[i] = {x:0,y:0};
+				}
+				for(var i = 0;i < 4;i++){
+					a[i].x = old[i].x;
+					a[i].y = old[i].y;
+				}
+				return a;
+			}
+			function checkDown(){//判断是否可以下移，true为可以
+				for(var i = 0;i < 4;i++){
+					if(activeBlock[i].x == ROW - 1)
+						return false;
+					if(!isCellValid(activeBlock[i].x+1,activeBlock[i].y))
+						return false;
+				}
+				return true;
+			}
+			function checkLeft(){//判断是否可以左移，true为可以
+				for(var i = 0;i < 4;i++){
+					if(activeBlock[i].y == 0)
+						return false;
+					if(!isCellValid(activeBlock[i].x,activeBlock[i].y - 1))
+						return false;
+				}
+				return true;
+			}
+			function checkRight(){//判断是否可以右移，true为可以
+				for(var i = 0;i < 4;i++){
+					if(activeBlock[i].y == COL - 1)
+						return false;
+					if(!isCellValid(activeBlock[i].x,activeBlock[i].y + 1))
+						return false;
+				}
+				return true;
+			}
+			function deleteLines(){//计算删除的行数，并返回删除的行数
+				var lines = 0;
+				for(var i = 0;i < ROW;i++){
+					var j;
+					for(j = 0;j < COL;j++){
+						if(board[i][j] == 0)
+							break;
+					}
+					if(j == COL){//说明此行被填满了，删除此行
+						lines++;//删除的行数加一
+						if(i != 0){//将此行以上的下移
+							for(var k = i - 1;k >= 0;k--){
+								board[k+1] = board[k];
+							}
+						}
+						board[0] = generateBlankLine();//第一行为空行
+					}
+				}
+				return lines;
+			}
+			//产生一个空白行.   
+			function generateBlankLine(){   
+				var line = new Array(COL);   
+				for(var i=0; i < COL; i++){   
+					line[i] = 0;   
+				}   
+				return line;   
+			}   
+			function updateBoard(){//更新游戏板
+				for(var i = 0;i < 4;i++){
+					board[activeBlock[i].x][activeBlock[i].y] = 1;
+				}
+			}
+			function updateScore(){//更新得分
+				document.getElementById("score").innerHTML = score;
+			}
+			function updateLevel(){//更新级别
+				document.getElementById("level").innerHTML = level;
+			}
+			function speedUp(){//加速
+				speed = speed - 100;
+			}
+			function keyControl(e){//根据键盘输入，采取不同动作
+				if(status != 1){
+					return;
+				}
+				var code;
+				var e = e || event;
+				code =e.keyCode || e.which || e.charCode;
+				
+				switch(code){
+					case 37:{//left arrow
+						moveLeft();
+						break;
+					}
+					case 38:{//up arrow
+						rotate();
+						break;
+					}
+					case 39:{//right arrow
+						moveRight();
+						break;
+					}
+					case 40:{//down arrow
+						moveDown();
+						break;
+					}
+				}
+			}
+            function begin(){//游戏开始
+				if(document.getElementById("begin").value == "重新开始"){
+					reset();
+				}
+				document.getElementById("begin").value = "重新开始";
+                status = 1;
+                tbl = document.getElementById("board");
+                activeBlock = generateBlock();
+                paint();
+				timer = setInterval(moveDown,speed);
+            }
+			function reset(){//重新开始游戏
+				clearInterval(timer);
+				document.getElementById("pause").value = "暂停";
+				status = 0;//置游戏状态为未开始
+				score = 0;//置得分为0
+				level = 0;//置级别为0
+				speed = START_SPEED;//置游戏速度为游戏初始速度
+				updateScore();//更新分数
+				updateLevel();//更新级别
+				ereaseBoard();//擦除界面
+				deleteBoard();//清楚游戏界面的状态
+			}
+			function deleteBoard(){//对游戏对应的board清零
+				for(var i=0;i<ROW;i++){    
+					for(var j=0; j<COL; j++){    
+						board[i][j] = 0;    
+					}    
+				} 
+			}
+			function pause(){//如果游戏运行，则暂停；如果游戏处于暂停，则运行
+				if(document.getElementById("pause").value == "暂停"){//如果是暂停
+					clearInterval(timer);//清除计数器
+					status = 2;//设置状态为非游戏中
+					document.getElementById("pause").value = "继续";//改变按钮的值
+					
+				}else{//继续
+					timer = setInterval(moveDown,speed);//设置计时器
+					status = 1;//游戏状态为游戏中
+					document.getElementById("pause").value = "暂停";//改变按钮的值
+				}
+			}
+			document.onkeydown = keyControl;
+        </script>
+    </head>
+    <body>
+		<p style= "font-size:15pt;">一个简单的俄罗斯方块，用方向键控制,其中向上键为变形</p>
+        <input type="button" id="begin" value="开始" onclick="begin()"/>
+		<input type="button" id="pause" value="暂停" onclick="pause()"/>
+		Score:<span id="score" style="width:3">  0</span>
+		Level:<span id="level" >0</span>
+		<!-- 一个20 * 10的表 -->
+		<div id="main" align="center";> 
+			<!-- 一个20 * 10的表 -->
+			<script>
+				var ROW = 20;
+				var COL = 10;
+				var tabStr = '<table id="board" align="center">';
+				for (var i = 0; i < ROW; i++){
+					tabStr += "<tr>";
+					for (var j = 0; j < COL; j++){
+						tabStr += "<td>" + "</td>";
+
+					}
+					tabStr += "</tr>";
+				}
+				tabStr += "</table>";
+				document.write(tabStr);
+			</script>
+		</div>
+            
+    </body>
+</html>
+        
+     
