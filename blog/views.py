@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Post,Category,Tag,Page
+from .models import Post,Category,Page
 from .utils import prev_next_post, paginator_process
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 # Create your views here.
@@ -17,8 +17,7 @@ def category(request, name):
     posts = paginator_process(posts, request)
     return render(request, 'blog/archive.html', {'posts':posts, 'category':name})
 def tag(request, name):
-    tag = get_object_or_404(Tag, name=name)
-    posts = Post.objects.filter(tag=tag.id).order_by('-publish_time')
+    posts = Post.objects.filter(tag__name=name).order_by('-publish_time')
     posts = paginator_process(posts, request)
     return render(request, 'blog/archive.html', {'posts':posts, 'tag':name})
 def archive(request, year, month):

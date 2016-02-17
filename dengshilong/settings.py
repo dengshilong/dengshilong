@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'www.dengshilong.org', 'dengshilong.org']
 
 INSTALLED_APPS = [
     'pagedown',
+    'taggit',
     'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -115,8 +116,8 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
-#USE_TZ = False
+#USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

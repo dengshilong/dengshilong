@@ -5,7 +5,7 @@ import django
 django.setup()
 import xmltodict
 import json
-from blog.models import Post,Tag,Category,Page
+from blog.models import Post,Category,Page
 def process_category(d, categories, tags):
     items = d.items()
     d = {}    
@@ -65,12 +65,7 @@ if __name__ == "__main__":
                     cat = Category.objects.create(name=category)
                 post.category.add(cat) 
             for tag in tags:
-                t = None
-                try:
-                    t = Tag.objects.get(name=tag)
-                except:
-                    t = Tag.objects.create(name=tag)
-                post.tag.add(t)
+                post.tag.add(tag)
             post.save()
             post.publish_time=publish_time
             post.save()

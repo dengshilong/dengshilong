@@ -1,5 +1,6 @@
 from django import template
-from blog.models import Post,Category,Link,Tag
+from blog.models import Post,Category,Link
+from taggit.models import Tag
 from random import shuffle
 register = template.Library()
 @register.inclusion_tag('blog/archive_list.html', takes_context = True)
