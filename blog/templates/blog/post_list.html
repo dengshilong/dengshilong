@@ -18,11 +18,10 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% for post in posts %}
-    {% include "blog/_post.html" %}
-{% endfor %}
-    {% include "blog/paginator.html" %}
-{% endblock %}
-{% block sidebar %}
-    {% include "blog/sidebar.html" %}
+    {% load pagination_tags %}
+    {% autopaginate post_list 10 %}
+    {% for post in post_list %}
+        {% include "blog/_post.html" %}
+    {% endfor %}
+    {% paginate %}
 {% endblock %}

@@ -1,0 +1,13 @@
+{% if is_paginated %}
+{% load i18n %}
+<nav>
+    <ul class="pager">
+        {% if page_obj.has_next %}
+            <li><a class='paginator nav-previous' href="?page={{page_obj.next_page_number}}">{% trans "next"%}</a></li>
+        {% endif %}
+        {% if page_obj.has_previous %}
+        <li><a class='paginator nav-next' href="?page={{page_obj.previous_page_number}}">{% trans "previous" %}</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
