@@ -20,8 +20,12 @@
 {% block content %}
     {% load pagination_tags %}
     {% autopaginate post_list 10 %}
-    {% for post in post_list %}
-        {% include "blog/_post.html" %}
-    {% endfor %}
+    {% if post_list %}
+        {% for post in post_list %}
+            {% include "blog/_post.html" %}
+        {% endfor %}
+    {% else %}
+        <h2>No post</h2>
+    {% endif %}
     {% paginate %}
 {% endblock %}
