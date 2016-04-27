@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.contrib.sitemaps.views import sitemap
-from . import views
+from . import views, api
 from .views import PostDetail, PostList, SitemapList, CategoryList, TagList, ArchiveList, PageDetail
 from .feeds import LatestEntriesFeed
 from .sitemaps import BlogSitemap
@@ -19,5 +19,8 @@ urlpatterns = [
     url(r'^feed/$', LatestEntriesFeed()),
     url(r'(?P<slug>.+)/$', PageDetail.as_view(), name="blog.page"),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps},
-        name='django.contrib.sitemaps.views.sitemap')
+        name='django.contrib.sitemaps.views.sitemap'),
+    url(r'api/blog/posts/?$', api.PostListAPI.as_view(), name='blog_post_api_list'),
+    url(r'api/blog/posts/(?P<pk>\d+)/?$', api.PostDetailAPI.as_view(), name='blog_post_api_detail'),
+    url(r'api/blog/category/(?P<category>\d+)/?$', api.CategoryAPI.as_view(), name='blog_category_api_list'),
 ]

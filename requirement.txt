@@ -2,6 +2,7 @@ Django==1.9.1
 -e git+https://github.com/timmyomahony/django-pagedown.git@c7d158dfeca312fa4eecbbab1601f472d645ccf4#egg=django_pagedown
 -e git+https://github.com/dengshilong/django-pagination.git@4237c077db116b8c28aff1951027ad5a694a6fe1#egg=django_pagination
 django-taggit==0.18.0
+djangorestframework==3.3.3
 ecdsa==0.13
 Fabric==1.10.2
 gunicorn==19.4.5

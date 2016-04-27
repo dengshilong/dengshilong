@@ -13,6 +13,11 @@ def fix_bug():
     local("git commit -m 'fix bug'")
     local("git push origin master")
     deploy()
+def install():
+    code_dir = '/home/dengsl/program/python/webBlog/dengshilong'
+    with cd(code_dir):
+        run("workon blog")
+        run("pip install -r requirement.txt")
 def deploy():
     code_dir = '/home/dengsl/program/python/webBlog/dengshilong'
     """with settings(warn_only=True):
@@ -20,5 +25,3 @@ def deploy():
             run("git clone user@vcshost:/path/to/repo/.git %s" % code_dir)"""
     with cd(code_dir):
         run("git pull")
-        run("source ../bin/activate")
-        run("python manage.py collectstatic")
