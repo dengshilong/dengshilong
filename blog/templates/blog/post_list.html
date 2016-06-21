@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}
 {% if category %}
-    {{category}}|邓世龙的自留地 
+    分类:{{category}}|邓世龙的自留地 
 {% elif tag %}
-    {{tag}}|邓世龙的自留地
+    标签:{{tag}}|邓世龙的自留地
+{% elif month %}
+    归档:{{year}}年{{month}}|邓世龙的自留地
 {% else %}
     邓世龙的自留地
 {% endif %}

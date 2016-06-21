@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'www.dengshilong.org', 'dengshilong.org']
 # Application definition
 
 INSTALLED_APPS = [
+    'compressor',
     'pagedown',
     'taggit',
     'pagination',
@@ -111,7 +112,11 @@ REST_FRAMEWORK = {
     #'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'PAGE_SIZE': 10,
 }
-
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -134,6 +139,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'wp-content')
 MEDIA_URL = '/wp-content/'
+COMPRESS_ROOT = STATIC_ROOT
 """TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )"""
