@@ -7,7 +7,10 @@ from django.views.generic import ListView, DetailView
 class PostList(ListView):
     model = Post
     def get_queryset(self):
-        return Post.objects.all().order_by('-publish_time')
+        queryset = Post.objects.all().order_by('-publish_time')
+        queryset = queryset.prefetch_related('category')
+        queryset = queryset.prefetch_related('tag')
+        return queryset
 
 class PostDetail(DetailView):
     model = Post
@@ -19,7 +22,9 @@ class CategoryList(ListView):
     model = Post
     def get_queryset(self):
         cat = get_object_or_404(Category, name=self.kwargs['category'])
-        return Post.objects.filter(category=cat.id).order_by('-publish_time')
+        queryset = Post.objects.filter(category=cat.id).order_by('-publish_time')
+        queryset = queryset.prefetch_related('tag', 'category')
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super(CategoryList, self).get_context_data(**kwargs)
@@ -30,7 +35,9 @@ class CategoryList(ListView):
 class TagList(ListView):
     model = Post
     def get_queryset(self):
-        return Post.objects.filter(tag__name=self.kwargs['tag']).order_by('-publish_time')
+        queryset = Post.objects.filter(tag__name=self.kwargs['tag']).order_by('-publish_time')
+        queryset = queryset.prefetch_related('tag', 'category')
+        return queryset
     def get_context_data(self, **kwargs):
         context = super(TagList, self).get_context_data(**kwargs)
         context['tag'] = self.kwargs['tag']
@@ -39,7 +46,10 @@ class TagList(ListView):
 class ArchiveList(ListView):
     model = Post
     def get_queryset(self):
-        return Post.objects.filter(publish_time__year=self.kwargs['year'], publish_time__month=self.kwargs['month']).order_by('-publish_time')
+        queryset = Post.objects.filter(publish_time__year=self.kwargs['year'], publish_time__month=self.kwargs['month']).order_by('-publish_time')
+        queryset = queryset.prefetch_related('tag', 'category')
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super(ArchiveList, self).get_context_data(**kwargs)
         context['year'] = self.kwargs['year']
