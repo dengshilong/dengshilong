@@ -4,6 +4,8 @@ from . import views, api
 from .views import PostDetail, PostList, SitemapList, CategoryList, TagList, ArchiveList, PageDetail
 from .feeds import LatestEntriesFeed
 from .sitemaps import BlogSitemap
+from django.views.generic import TemplateView
+
 sitemaps = {
     'static': BlogSitemap,
 }
@@ -20,4 +22,6 @@ urlpatterns = [
     url(r'^api/blog/posts/list/?$', api.PostListAPI.as_view(), name='blog_post_api_list'),
     url(r'^api/blog/posts/(?P<pk>\d+)/?$', api.PostAPI.as_view(), name='blog_post_api'),
     url(r'^api/blog/category/(?P<category>\w+)/?$', api.CategoryAPI.as_view(), name='blog_category_api_list'),
+    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+
 ]
