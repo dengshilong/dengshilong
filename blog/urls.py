@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^category/(?P<category>.+)/$', CategoryList.as_view(), name="blog.category"),
     url(r'^tag/(?P<tag>.+)/$', TagList.as_view(), name="blog.tag"),
     url(r'^feed/$', LatestEntriesFeed()),
-    url(r'^(?P<slug>\w+)/$', PageDetail.as_view(), name="blog.page"),
+    url(r'^(?P<slug>[-\w]+)/$', PageDetail.as_view(), name="blog.page"),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^api/blog/posts/list/?$', api.PostListAPI.as_view(), name='blog_post_api_list'),
     url(r'^api/blog/posts/(?P<pk>\d+)/?$', api.PostAPI.as_view(), name='blog_post_api'),
