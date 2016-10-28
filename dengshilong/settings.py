@@ -21,10 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'uvh#*_g9uxurbp%8qgr1fg9ns+o()5od5d+18(=qwagckyuthx'
-
+RUN_ENV = os.getenv("RUN_ENV", default='dev')
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
+if RUN_ENV == 'deploy':
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'www.dengshilong.org', 'dengshilong.org']
 
@@ -140,16 +142,16 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'wp-content')
 MEDIA_URL = '/wp-content/'
 COMPRESS_ROOT = STATIC_ROOT
-"""TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)"""
+# TEMPLATE_DIRS = (
+#    os.path.join(BASE_DIR, 'templates'),
+#)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format' : '%(levelname)s [%(asctime)s] [%(name)s:%(module)s:%(funcName)s:%(lineno)s] [%(exc_info)s] %(message)s',
-            'datefmt' : "%d/%b/%Y %H:%M:%S"
+            'format': '%(levelname)s [%(asctime)s] [%(name)s:%(module)s:%(funcName)s:%(lineno)s] [%(exc_info)s] %(message)s',
+            'datefmt': "%d/%b/%Y %H:%M:%S"
         },
     },
     'handlers': {
