@@ -28,7 +28,7 @@ if RUN_ENV == 'deploy':
 else:
     DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'www.dengshilong.org', 'dengshilong.org']
+ALLOWED_HOSTS = ['127.0.0.1', 'www.dengshilong.org', 'dengshilong.org', 'dengshilong.com', 'www.dengshilong.com']
 
 
 # Application definition
