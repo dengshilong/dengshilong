@@ -3,9 +3,11 @@ astroid==1.4.8
 backports.functools-lru-cache==1.3
 cached-property==1.3.0
 configparser==3.5.0
+coverage==4.3.4
 Django==1.9.1
 django-appconf==1.0.2
 django-compressor==2.0
+django-cors-headers==2.3.0
 -e git+https://github.com/timmyomahony/django-pagedown.git@c7d158dfeca312fa4eecbbab1601f472d645ccf4#egg=django_pagedown
 -e git+https://github.com/dengshilong/django-pagination.git@4237c077db116b8c28aff1951027ad5a694a6fe1#egg=django_pagination
 django-taggit==0.18.0

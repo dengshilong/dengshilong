@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^feed/$', LatestEntriesFeed()),
     url(r'^(?P<slug>[-\w]+)/$', PageDetail.as_view(), name="blog.page"),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    url(r'^api/blog/posts/list/?$', api.PostListAPI.as_view(), name='blog_post_api_list'),
+    url(r'^api/blog/posts/?$', api.PostListAPI.as_view(), name='blog_post_api_list'),
     url(r'^api/blog/posts/(?P<pk>\d+)/?$', api.PostAPI.as_view(), name='blog_post_api'),
     url(r'^api/blog/category/(?P<category>\w+)/?$', api.CategoryAPI.as_view(), name='blog_category_api_list'),
     url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
