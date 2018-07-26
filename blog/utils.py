@@ -1,3 +1,5 @@
+from rest_framework.pagination import PageNumberPagination
+
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -29,3 +31,9 @@ def paginator_process(posts, request):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
     return posts
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100

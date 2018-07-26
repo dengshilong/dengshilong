@@ -7,6 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 from taggit.models import Tag
 
 from blog.serializers import LinkSerializer, PostSerializer, CategorySerializer, TagSerializer
+from blog.utils import StandardResultsSetPagination
 from .models import Post,Category,Page, Link
 from django.views.generic import ListView, DetailView
 
@@ -91,6 +92,7 @@ class LinkViewSet(ModelViewSet):
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
         params = self.request.query_params
