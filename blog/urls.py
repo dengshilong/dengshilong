@@ -14,6 +14,7 @@ sitemaps = {
 router = routers.DefaultRouter()
 router.register(r'links', views.LinkViewSet, base_name='links')
 router.register(r'posts', views.PostViewSet, base_name='posts')
+router.register(r'pages', views.PageViewSet, base_name='pages')
 router.register(r'categories', views.CategoryViewSet, base_name='categories')
 router.register(r'tags', views.TagViewSet, base_name='tags')
 

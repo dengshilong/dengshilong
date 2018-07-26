@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from taggit.models import Tag
 
-from blog.serializers import LinkSerializer, PostSerializer, CategorySerializer, TagSerializer
+from blog.serializers import LinkSerializer, PostSerializer, CategorySerializer, TagSerializer, PageSerializer
 from blog.utils import StandardResultsSetPagination
 from .models import Post,Category,Page, Link
 from django.views.generic import ListView, DetailView
@@ -138,3 +138,17 @@ class MonthsAPI(APIView):
         months = list(Post.objects.datetimes('publish_time', 'month').all())
         months.reverse()
         return Response(months, status=status.HTTP_200_OK)
+
+
+class PageViewSet(ModelViewSet):
+    queryset = Page.objects.all()
+    serializer_class = PageSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        queryset = super(PageViewSet, self).get_queryset()
+        params = self.request.query_params
+        slug = params.get('slug', None)
+        if slug:
+            queryset = queryset.filter(slug=slug)
+        return queryset
