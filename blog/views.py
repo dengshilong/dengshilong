@@ -1,8 +1,15 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Post,Category,Page
-from .utils import prev_next_post, paginator_process
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+# coding: utf-8
+from django.shortcuts import get_object_or_404
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from taggit.models import Tag
+
+from blog.serializers import LinkSerializer, PostSerializer, CategorySerializer, TagSerializer
+from .models import Post,Category,Page, Link
 from django.views.generic import ListView, DetailView
+
 # Create your views here.
 class PostList(ListView):
     model = Post
@@ -12,12 +19,14 @@ class PostList(ListView):
         queryset = queryset.prefetch_related('tag')
         return queryset
 
+
 class PostDetail(DetailView):
     model = Post
     def get_queryset(self):
         return Post.objects.filter(publish_time__year=self.kwargs['year'], publish_time__month=self.kwargs['month'], 
             publish_time__day=self.kwargs['day'], slug=self.kwargs['slug'])
-        
+
+
 class CategoryList(ListView):
     model = Post
     def get_queryset(self):
@@ -43,6 +52,7 @@ class TagList(ListView):
         context['tag'] = self.kwargs['tag']
         return context
 
+
 class ArchiveList(ListView):
     model = Post
     def get_queryset(self):
@@ -55,6 +65,7 @@ class ArchiveList(ListView):
         context['year'] = self.kwargs['year']
         context['month'] = self.kwargs['month']
         return context
+
 
 class PageDetail(DetailView):
     model = Page
@@ -69,3 +80,59 @@ class SitemapList(ListView):
         context = super(SitemapList, self).get_context_data(**kwargs)
         context['pages'] = Page.objects.all()
         return context
+
+
+class LinkViewSet(ModelViewSet):
+    queryset = Link.objects.all()
+    serializer_class = LinkSerializer
+    pagination_class = None
+
+
+class PostViewSet(ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        params = self.request.query_params
+        queryset = super(PostViewSet, self).get_queryset()
+        category = params.get('category', None)
+        if category:
+            queryset = queryset.filter(category__name=category)
+        tag = params.get('tag', None)
+        if tag:
+            queryset = queryset.filter(tag__name=tag)
+        year = params.get('year', None)
+        month = params.get('month', None)
+        day = params.get('day', None)
+        slug = params.get('slug', None)
+        if year:
+            queryset = queryset.filter(publish_time__year=year)
+        if month:
+            queryset = queryset.filter(publish_time__month=month)
+        if day:
+            queryset = queryset.filter(publish_time__day=day)
+        if slug:
+            queryset = queryset.filter(slug=slug)
+        queryset = queryset.prefetch_related('tag', 'category')
+        queryset = queryset.order_by('-publish_time')
+        return queryset
+
+
+class CategoryViewSet(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = None
+
+
+class TagViewSet(ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    pagination_class = None
+
+
+class MonthsAPI(APIView):
+
+    def get(self, request, *args, **kwargs):
+        months = list(Post.objects.datetimes('publish_time', 'month').all())
+        months.reverse()
+        return Response(months, status=status.HTTP_200_OK)
