@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'taggit_serializer',
     'corsheaders',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE_CLASSES = [

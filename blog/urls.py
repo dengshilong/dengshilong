@@ -1,6 +1,7 @@
 from django.conf.urls import url, include
 from django.contrib.sitemaps.views import sitemap
 from rest_framework import routers
+from rest_framework_swagger.views import get_swagger_view
 
 from . import views, api
 from .views import PostDetail, PostList, SitemapList, CategoryList, TagList, ArchiveList, PageDetail
@@ -18,6 +19,8 @@ router.register(r'pages', views.PageViewSet, base_name='pages')
 router.register(r'categories', views.CategoryViewSet, base_name='categories')
 router.register(r'tags', views.TagViewSet, base_name='tags')
 
+schema_view = get_swagger_view(title='API', url='/')
+
 urlpatterns = [
     url(r'^$', PostList.as_view(), name='blog.index'),
     url(r'^sitemap/$', SitemapList.as_view(), name='blog.sitemap_view'),
@@ -26,6 +29,7 @@ urlpatterns = [
     url(r'^category/(?P<category>.+)/$', CategoryList.as_view(), name="blog.category"),
     url(r'^tag/(?P<tag>.+)/$', TagList.as_view(), name="blog.tag"),
     url(r'^feed/$', LatestEntriesFeed()),
+    url(r'^blog_api/$', schema_view),
     url(r'^(?P<slug>[-\w]+)/$', PageDetail.as_view(), name="blog.page"),
     url(r'^sitemap\.xml$', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     url(r'^api/', include(router.urls)),

@@ -1,6 +1,8 @@
 # coding: utf-8
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -83,12 +85,14 @@ class SitemapList(ListView):
         return context
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class LinkViewSet(ModelViewSet):
     queryset = Link.objects.all()
     serializer_class = LinkSerializer
     pagination_class = None
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -120,18 +124,21 @@ class PostViewSet(ModelViewSet):
         return queryset
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     pagination_class = None
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class MonthsAPI(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -140,6 +147,7 @@ class MonthsAPI(APIView):
         return Response(months, status=status.HTTP_200_OK)
 
 
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 class PageViewSet(ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer

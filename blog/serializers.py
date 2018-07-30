@@ -9,6 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
+        fields = '__all__'
 
 
 class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -17,20 +18,25 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = Post
+        fields = '__all__'
+
 
 class LinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Link
+        fields = '__all__'
 
 
 class TagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
+        fields = '__all__'
 
 
 class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
+        fields = '__all__'
