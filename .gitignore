@@ -5,4 +5,4 @@
 htmlcov
 static
 logs
-wp-content
+#wp-content
