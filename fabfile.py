@@ -23,14 +23,14 @@ def fix_bug():
 
 
 def install():
-    code_dir = '/home/dengsl/program/python/webBlog/dengshilong'
+    code_dir = '/home/dengsl/program/python/dengshilong'
     with cd(code_dir):
         run("workon blog")
         run("pip install -r requirement.txt")
 
 
 def deploy():
-    code_dir = '/home/dengsl/program/python/webBlog/dengshilong'
+    code_dir = '/home/dengsl/program/python/dengshilong'
     """with settings(warn_only=True):
         if run("test -d %s" % code_dir).failed:
             run("git clone user@vcshost:/path/to/repo/.git %s" % code_dir)"""
