@@ -41,7 +41,7 @@ pylint==1.6.4
 pylint-django==0.7.2
 pylint-plugin-utils==0.2.4
 pytz==2015.7
-PyYAML==3.12
+PyYAML==5.4
 rcssmin==1.0.6
 requests==2.19.1
 rjsmin==1.0.12
