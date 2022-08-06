@@ -5,7 +5,7 @@ from .models import Post
 class BlogSitemap(sitemaps.Sitemap):
     priority = 0.5
     changefreq = 'monthly'
-    protocol = 'https'
+    protocol = 'http'
 
     def items(self):
         return Post.objects.all().order_by("-publish_time")
